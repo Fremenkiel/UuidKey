@@ -1,6 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackageId>KSWA.20.09.25.UUIDKEY</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Fremenkiel</Authors>
+        <OutputType>Library</OutputType>
+        <RootNamespace>UuidKeySharp</RootNamespace>
+        <AssemblyName>UuidKeySharp</AssemblyName>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
