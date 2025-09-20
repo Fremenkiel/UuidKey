@@ -4,9 +4,9 @@ namespace UuidKeySharp;
 
 public class ApiKey
 {
-    private string Prefix { get; } 
-    private Key Key { get; }
-    private string Entropy { get; }
+    public string Prefix { get; } 
+    public Key Key { get; }
+    public string Entropy { get; }
     public string Checksum { get; set; } = null!;
 
     public ApiKey(string prefix, Key key, string entropy)

@@ -177,7 +177,6 @@ namespace UuidKeySharp.Utils.Blake2Sharp
 		{
 			if (!_isInitialized)
 				throw new InvalidOperationException("Not initialized");
-			_isInitialized = false;
 
 			//Last compression
 			_counter0 += (uint)_bufferFilled;

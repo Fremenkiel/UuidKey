@@ -14,15 +14,13 @@ public class UuidKey
     private readonly CrockfordBase32Encoding _encoder = new();
     private readonly Hasher _hasher = Blake2B.Create(new Blake2BConfig { OutputSizeInBytes = 32 });
 
-    public ApiKey NewApiKey(string prefix, string uuid, KeyOptions? options = null)
+    public ApiKey NewApiKey(string prefix, string uuid, NumOfCrock32Chars numOfCrock32Chars = NumOfCrock32Chars.EntropyBits160)
     {
-        options ??= new KeyOptions();
-        
         if (string.IsNullOrWhiteSpace(prefix))
             throw new ArgumentException("prefix cannot be null, empty, or only whitespace.", nameof(prefix));
 
-        var key = Encode(uuid, !options.Hyphens);
-        var entropy = GenerateEntropy(options.NumOfCrock32Chars);
+        var key = Encode(uuid, true);
+        var entropy = GenerateEntropy(numOfCrock32Chars);
 
         return new ApiKey(prefix, key, entropy);
     }
@@ -46,7 +44,7 @@ public class UuidKey
             throw new ArgumentException("Invalid Key format: insufficient length");
         
         var keyPart = remainder[..Key.KeyLengthWithoutHyphens];
-        var key = Parse(keyPart, true);
+        var key = Parse(keyPart);
 
         var entropy = remainder[Key.KeyLengthWithoutHyphens..];
 
@@ -75,7 +73,7 @@ public class UuidKey
         return Encode(uuid.ToString());
     }
     
-    private Key Encode(string u, bool withoutHyphens = false)
+    public Key Encode(string u, bool withoutHyphens = false)
     {
         var uuid = u;
         List<string> parts = [
@@ -95,9 +93,9 @@ public class UuidKey
         return new StringBuilder(7).Insert(0, "0", padding) + encoded;
     }
 
-    public Key Parse(string key, bool withoutHyphens = false)
+    public Key Parse(string key)
     {
-        var apiKey = new Key(key, withoutHyphens);
+        var apiKey = new Key(key, key.Length == Key.KeyLengthWithoutHyphens);
         if (!apiKey.IsValid())
             throw new ArgumentException("Invalid api key");
         
