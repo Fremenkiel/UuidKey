@@ -10,7 +10,7 @@
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
 
-namespace UuidKeySharp.Utils.Blake2Sharp;
+namespace UuidKeySharp.Hashers;
 
 public sealed partial class Blake2BCore
 {

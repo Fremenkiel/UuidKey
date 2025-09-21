@@ -9,24 +9,27 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-namespace UuidKeySharp.Utils.Blake2Sharp;
+namespace UuidKeySharp.Hashers;
 
-public sealed class Blake2BTreeConfig : ICloneable
+public sealed class Blake2BConfig : ICloneable
 {
-	public int IntermediateHashSize { get; init; } = 64;
-	public int MaxHeight { get; init; }
-	public long LeafSize { get; init; }
-	public int FanOut { get; init; }
+	public byte[]? Personalization { get; private set; }
+	public byte[]? Salt { get; private set; }
+	public byte[]? Key { get; private set; }
+	public int OutputSizeInBytes { get; init; } = 64;
 
-	private Blake2BTreeConfig Clone()
+	private Blake2BConfig Clone()
 	{
-		var result = new Blake2BTreeConfig
+		var result = new Blake2BConfig
 		{
-			IntermediateHashSize = IntermediateHashSize,
-			MaxHeight = MaxHeight,
-			LeafSize = LeafSize,
-			FanOut = FanOut
+			OutputSizeInBytes = OutputSizeInBytes
 		};
+		if (Key != null)
+			result.Key = (byte[])Key.Clone();
+		if (Personalization != null)
+			result.Personalization = (byte[])Personalization.Clone();
+		if (Salt != null)
+			result.Salt = (byte[])Salt.Clone();
 		return result;
 	}
 

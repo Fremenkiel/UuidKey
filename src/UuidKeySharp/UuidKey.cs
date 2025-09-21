@@ -1,5 +1,5 @@
 using System.Text;
-using UuidKeySharp.Utils.Blake2Sharp;
+using UuidKeySharp.Hashers;
 using UuidKeySharp.Enums;
 using UuidKeySharp.Entities;
 using CrockfordBase32;

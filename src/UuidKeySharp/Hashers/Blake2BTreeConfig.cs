@@ -9,11 +9,29 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-namespace UuidKeySharp.Utils.Blake2Sharp;
+namespace UuidKeySharp.Hashers;
 
-public abstract class Hasher
+public sealed class Blake2BTreeConfig : ICloneable
 {
-	public abstract int Length();
-    public abstract byte[] Finish();
-	public abstract void Update(byte[] data, int start, int count);
+	public int IntermediateHashSize { get; init; } = 64;
+	public int MaxHeight { get; init; }
+	public long LeafSize { get; init; }
+	public int FanOut { get; init; }
+
+	private Blake2BTreeConfig Clone()
+	{
+		var result = new Blake2BTreeConfig
+		{
+			IntermediateHashSize = IntermediateHashSize,
+			MaxHeight = MaxHeight,
+			LeafSize = LeafSize,
+			FanOut = FanOut
+		};
+		return result;
+	}
+
+	object ICloneable.Clone()
+	{
+		return Clone();
+	}
 }

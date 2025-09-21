@@ -22,7 +22,7 @@
   BlakeSharp was derived from the reference C implementation.
 */
 
-namespace UuidKeySharp.Utils.Blake2Sharp;
+namespace UuidKeySharp.Hashers;
 
 public sealed partial class Blake2BCore
 {
