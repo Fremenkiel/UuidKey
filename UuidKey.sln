@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuidKeySharp", "src\UuidKeySharp\UuidKeySharp.csproj", "{AB40A02F-63B2-4FFE-9565-22D2194D1CCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuidKeySharp.Test", "tests\UuidKeySharp.Test\UuidKeySharp.Test.csproj", "{6C6D2DEE-E5D4-4D46-9253-548BA75F1C42}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UuidKeySharp.Test", "test\UuidKeySharp.Test\UuidKeySharp.Test.csproj", "{6C6D2DEE-E5D4-4D46-9253-548BA75F1C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
