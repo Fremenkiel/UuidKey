@@ -9,14 +9,22 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
+using System;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace UuidKeySharp.Utils.Blake2Sharp;
-
-public static class Blake2B
+namespace UuidKeySharp.Utils.Blake2Sharp
 {
-	public static Hasher Create(Blake2BConfig config)
+	public abstract class NodeHasher
 	{
-		return new Blake2BHasher(config);
+		public abstract void Init(int depth, long nodeOffset);
+		public abstract byte[] Finish(bool isEndOfLayer);
+		public abstract void Update(byte[] data, int start, int count);
+
+		public void Update(byte[] data)
+		{
+			Update(data, 0, data.Length);
+		}
 	}
 }
-

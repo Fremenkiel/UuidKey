@@ -71,22 +71,21 @@ public class UuidKey : IUuidKey
         return Guid.CreateVersion7();
     }
 
-    public Key Encode(Guid uuid)
+    public Key Encode(Guid uuid, bool withoutHyphens = false)
     {
-        return Encode(uuid.ToString());
+        return Encode(uuid.ToString(), withoutHyphens);
     }
     
     public Key Encode(string u, bool withoutHyphens = false)
     {
-        var uuid = u;
         List<string> parts = [
-            EncodePart(uuid[..8]),
-            EncodePart(uuid[9..13]+uuid[14..18]),
-            EncodePart(uuid[19..23]+uuid[24..28]),
-            EncodePart(uuid[28..36]),
+            EncodePart(u[..8]),
+            EncodePart(u[9..13]+u[14..18]),
+            EncodePart(u[19..23]+u[24..28]),
+            EncodePart(u[28..36]),
         ];
 
-        return new Key(withoutHyphens ? String.Join("", parts) : String.Join("-", parts));
+        return new Key(withoutHyphens ? string.Join("", parts) : string.Join("-", parts), withoutHyphens);
     }
 
     public Key Parse(string key)
@@ -116,7 +115,7 @@ public class UuidKey : IUuidKey
         var entropy = new byte[numOfRandomBytes];
         for (var i = 0; i < numOfRandomBytes; i +=  _hasher.Length())
         {
-            _hasher.Update(inputBytes, 0, numOfRandomBytes);
+            _hasher.Update(inputBytes, 0, _hasher.Length());
             var hash = _hasher.Finish();
             
             var copyLength = numOfRandomBytes - i < _hasher.Length() ? numOfRandomBytes - i : _hasher.Length();
@@ -131,7 +130,7 @@ public class UuidKey : IUuidKey
         {
             var end = i + 8 < entropy.Length ? i + 8 : entropy.Length;
 
-            UInt64? n = null;
+            ulong? n = null;
             var j = 0;
             foreach (var b in entropy[i..end])
             {
