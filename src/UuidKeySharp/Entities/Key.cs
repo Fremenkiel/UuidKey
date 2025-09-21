@@ -1,7 +1,5 @@
-using System.Text.RegularExpressions;
 using CrockfordBase32;
 using UuidKeySharp.Utils;
-using Regex = System.Text.RegularExpressions.Regex;
 
 namespace UuidKeySharp.Entities;
 

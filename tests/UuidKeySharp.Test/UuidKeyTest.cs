@@ -47,6 +47,7 @@ public class UuidKeyTest : IClassFixture<TestFixture>
         Assert.Equal(prefix, apiKeyArray[0]);
         Assert.Equal(key.ToString(), apiKeyArray[1][..28]);
         Assert.Equal(uuid, apiKey.Key.Uuid());
+        Assert.Equal(21, apiKey.Entropy.Length);
         Assert.Equal(apiKey.Checksum, apiKeyArray[2]);
     }
     
@@ -91,6 +92,10 @@ public class UuidKeyTest : IClassFixture<TestFixture>
         Assert.Equal(21, apiKey160Array[1][28..].Length);
         Assert.Equal(42, apiKey256Array[1][28..].Length);
         
+        Assert.NotEqual(apiKey128Array[1][28..], apiKey160Array[1][28..42]);
+        Assert.NotEqual(apiKey128Array[1][28..], apiKey256Array[1][28..42]);
+        Assert.NotEqual(apiKey160Array[1][28..42], apiKey256Array[1][28..42]);
+        
         
         Assert.NotEqual(apiKey128Array[2], apiKey160Array[2]);
         Assert.NotEqual(apiKey160Array[2], apiKey256Array[2]);
@@ -101,7 +106,7 @@ public class UuidKeyTest : IClassFixture<TestFixture>
     public void Parse_Api_key()
     {
         // Arrange
-        const string apiKeyString = "AGNTSTNP_38QARV01ET0G6Z2CJD9VA2ZZAR0XJJLSO7WBNWY3F_96FDB498";
+        const string apiKeyString = "AGNTSTNP_38QARV01ET0G6Z2CJD9VA2ZZAR0X3XZT0XKHH7RWV3XZT0XKH_F6FD94C0";
         var uuid = Guid.Parse("d1756360-5da0-40df-9926-a76abff5601d");
         var apiKeyArray = apiKeyString.Split('_');
         
@@ -113,6 +118,7 @@ public class UuidKeyTest : IClassFixture<TestFixture>
         Assert.NotNull(apiKey);
         Assert.Equal(apiKeyArray[0], apiKey.Prefix);
         Assert.Equal(apiKeyArray[1][..28], apiKey.Key.ToString());
+        Assert.Equal(21, apiKey.Entropy.Length);
         Assert.Equal(apiKeyArray[2], apiKey.Checksum);
         Assert.Equal(apiKeyString, apiKey.ToString());
         Assert.Equal(uuid, apiKey.Key.Uuid());
@@ -133,19 +139,21 @@ public class UuidKeyTest : IClassFixture<TestFixture>
         Assert.NotNull(key);
         Assert.Equal("38QARV0-1ET0G6Z-2CJD9VA-2ZZAR0X", key.ToString());
         Assert.Equal(uuid, key.Uuid());
+        Assert.True(key.IsValid());
         
         Assert.IsType<Key>(keyWithoutHyphens);
         Assert.NotNull(keyWithoutHyphens);
         Assert.Equal("38QARV01ET0G6Z2CJD9VA2ZZAR0X", keyWithoutHyphens.ToString());
         Assert.Equal(uuid, keyWithoutHyphens.Uuid());
+        Assert.True(keyWithoutHyphens.IsValid());
     }
     
     [Fact]
     public void Decode_Uuid()
     {
         // Arrange
-        var keyString = "38QARV0-1ET0G6Z-2CJD9VA-2ZZAR0X";
-        var keyStringWithoutHyphens = "38QARV01ET0G6Z2CJD9VA2ZZAR0X";
+        const string keyString = "38QARV0-1ET0G6Z-2CJD9VA-2ZZAR0X";
+        const string keyStringWithoutHyphens = "38QARV01ET0G6Z2CJD9VA2ZZAR0X";
         
         // Act
         var key = _uuidKey.Parse(keyString);
@@ -156,10 +164,12 @@ public class UuidKeyTest : IClassFixture<TestFixture>
         Assert.NotNull(key);
         Assert.Equal(keyString, key.ToString());
         Assert.Equal(Guid.Parse("d1756360-5da0-40df-9926-a76abff5601d"), key.Uuid());
+        Assert.True(key.IsValid());
         
         Assert.IsType<Key>(keyWithoutHyphens);
         Assert.NotNull(keyWithoutHyphens);
         Assert.Equal(keyStringWithoutHyphens, keyWithoutHyphens.ToString());
         Assert.Equal(Guid.Parse("d1756360-5da0-40df-9926-a76abff5601d"), keyWithoutHyphens.Uuid());
+        Assert.True(keyWithoutHyphens.IsValid());
     }
 }

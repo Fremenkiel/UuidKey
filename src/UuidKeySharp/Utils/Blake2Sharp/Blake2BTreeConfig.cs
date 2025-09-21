@@ -9,42 +9,29 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
+namespace UuidKeySharp.Utils.Blake2Sharp;
 
-namespace UuidKeySharp.Utils.Blake2Sharp
+public sealed class Blake2BTreeConfig : ICloneable
 {
-	public sealed class Blake2BTreeConfig : ICloneable
+	public int IntermediateHashSize { get; init; } = 64;
+	public int MaxHeight { get; init; }
+	public long LeafSize { get; init; }
+	public int FanOut { get; init; }
+
+	private Blake2BTreeConfig Clone()
 	{
-		public int IntermediateHashSize { get; set; } = 64;
-		public int MaxHeight { get; set; }
-		public long LeafSize { get; set; }
-		public int FanOut { get; set; }
-
-		private Blake2BTreeConfig Clone()
+		var result = new Blake2BTreeConfig
 		{
-			var result = new Blake2BTreeConfig
-			{
-				IntermediateHashSize = IntermediateHashSize,
-				MaxHeight = MaxHeight,
-				LeafSize = LeafSize,
-				FanOut = FanOut
-			};
-			return result;
-		}
+			IntermediateHashSize = IntermediateHashSize,
+			MaxHeight = MaxHeight,
+			LeafSize = LeafSize,
+			FanOut = FanOut
+		};
+		return result;
+	}
 
-		public static Blake2BTreeConfig CreateInterleaved(int parallelism)
-		{
-			var result = new Blake2BTreeConfig
-			{
-				FanOut = parallelism,
-				MaxHeight = 2,
-				IntermediateHashSize = 64
-			};
-			return result;
-		}
-
-		object ICloneable.Clone()
-		{
-			return Clone();
-		}
+	object ICloneable.Clone()
+	{
+		return Clone();
 	}
 }

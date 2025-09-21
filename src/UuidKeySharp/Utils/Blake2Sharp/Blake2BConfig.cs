@@ -9,49 +9,32 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-using System;
-using System.Text;
+namespace UuidKeySharp.Utils.Blake2Sharp;
 
-namespace UuidKeySharp.Utils.Blake2Sharp
+public sealed class Blake2BConfig : ICloneable
 {
-	public sealed class Blake2BConfig : ICloneable
+	public byte[]? Personalization { get; private set; }
+	public byte[]? Salt { get; private set; }
+	public byte[]? Key { get; private set; }
+	public int OutputSizeInBytes { get; init; } = 64;
+
+	private Blake2BConfig Clone()
 	{
-		public byte[] Personalization { get; set; }
-		public byte[] Salt { get; set; }
-		public byte[] Key { get; set; }
-		public int OutputSizeInBytes { get; set; }
-		public int OutputSizeInBits
+		var result = new Blake2BConfig
 		{
-			get { return OutputSizeInBytes * 8; }
-			set
-			{
-				if (value % 8 != 0)
-					throw new ArgumentException("Output size must be a multiple of 8 bits");
-				OutputSizeInBytes = value / 8;
-			}
-		}
+			OutputSizeInBytes = OutputSizeInBytes
+		};
+		if (Key != null)
+			result.Key = (byte[])Key.Clone();
+		if (Personalization != null)
+			result.Personalization = (byte[])Personalization.Clone();
+		if (Salt != null)
+			result.Salt = (byte[])Salt.Clone();
+		return result;
+	}
 
-		public Blake2BConfig()
-		{
-			OutputSizeInBytes = 64;
-		}
-
-		public Blake2BConfig Clone()
-		{
-			var result = new Blake2BConfig();
-			result.OutputSizeInBytes = OutputSizeInBytes;
-			if (Key != null)
-				result.Key = (byte[])Key.Clone();
-			if (Personalization != null)
-				result.Personalization = (byte[])Personalization.Clone();
-			if (Salt != null)
-				result.Salt = (byte[])Salt.Clone();
-			return result;
-		}
-
-		object ICloneable.Clone()
-		{
-			return Clone();
-		}
+	object ICloneable.Clone()
+	{
+		return Clone();
 	}
 }

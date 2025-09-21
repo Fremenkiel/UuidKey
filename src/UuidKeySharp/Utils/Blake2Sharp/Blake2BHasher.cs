@@ -9,63 +9,54 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with
 // this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+namespace UuidKeySharp.Utils.Blake2Sharp;
 
-namespace UuidKeySharp.Utils.Blake2Sharp
+internal class Blake2BHasher : Hasher
 {
-	internal class Blake2BHasher : Hasher
+	private readonly Blake2BCore _core = new();
+	private readonly ulong[] _rawConfig;
+	private readonly byte[]? _key;
+	private readonly int _outputSizeInBytes;
+	private static readonly Blake2BConfig DefaultConfig = new();
+
+	private void Init()
 	{
-		private readonly Blake2BCore core = new Blake2BCore();
-		private readonly ulong[] rawConfig;
-		private readonly byte[] key;
-		private readonly int outputSizeInBytes;
-		private static readonly Blake2BConfig DefaultConfig = new Blake2BConfig();
-
-		public override void Init()
+		_core.Initialize(_rawConfig);
+		if (_key != null)
 		{
-			core.Initialize(rawConfig);
-			if (key != null)
-			{
-				core.HashCore(key, 0, key.Length);
-			}
+			_core.HashCore(_key, 0, _key.Length);
 		}
+	}
 
-        public override int Length()
-        {
-            return outputSizeInBytes;
-        }
+    public override int Length()
+    {
+        return _outputSizeInBytes;
+    }
 
-		public override byte[] Finish()
+	public override byte[] Finish()
+	{
+		var fullResult = _core.HashFinal();
+		if (_outputSizeInBytes == fullResult.Length) return fullResult;
+		var result = new byte[_outputSizeInBytes];
+		Array.Copy(fullResult, result, result.Length);
+		return result;
+	}
+
+	public Blake2BHasher(Blake2BConfig? config)
+	{
+		config ??= DefaultConfig;
+		_rawConfig = Blake2IvBuilder.ConfigB(config, null);
+		if (config.Key != null && config.Key.Length != 0)
 		{
-			var fullResult = core.HashFinal();
-			if (outputSizeInBytes != fullResult.Length)
-			{
-				var result = new byte[outputSizeInBytes];
-				Array.Copy(fullResult, result, result.Length);
-				return result;
-			}
-			return fullResult;
+			_key = new byte[128];
+			Array.Copy(config.Key, _key, config.Key.Length);
 		}
+		_outputSizeInBytes = config.OutputSizeInBytes;
+		Init();
+	}
 
-		public Blake2BHasher(Blake2BConfig config)
-		{
-			if (config == null)
-				config = DefaultConfig;
-			rawConfig = Blake2IvBuilder.ConfigB(config, null);
-			if (config.Key != null && config.Key.Length != 0)
-			{
-				key = new byte[128];
-				Array.Copy(config.Key, key, config.Key.Length);
-			}
-			outputSizeInBytes = config.OutputSizeInBytes;
-			Init();
-		}
-
-		public override void Update(byte[] data, int start, int count)
-		{
-			core.HashCore(data, start, count);
-		}
+	public override void Update(byte[] data, int start, int count)
+	{
+		_core.HashCore(data, start, count);
 	}
 }

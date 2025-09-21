@@ -1,6 +1,5 @@
 using UuidKeySharp.Entities;
 using UuidKeySharp.Enums;
-using UuidKeySharp.Utils;
 
 namespace UuidKeySharp.Interfaces;
 
