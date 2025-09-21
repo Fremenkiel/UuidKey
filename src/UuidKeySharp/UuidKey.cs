@@ -1,11 +1,14 @@
 using System.Text;
 using UuidKeySharp.Utils.Blake2Sharp;
 using UuidKeySharp.Enums;
+using UuidKeySharp.Entities;
 using CrockfordBase32;
+using UuidKeySharp.Interfaces;
+using UuidKeySharp.Utils;
 
 namespace UuidKeySharp;
 
-public class UuidKey
+public class UuidKey : IUuidKey
 {
     private const int EntropyBytesMultiplier = 8 / 5;
     private const int InitialEntropyBytes = 32;
@@ -52,7 +55,7 @@ public class UuidKey
         if (checksum.Length != ChecksumLength)
             throw new ArgumentException("Invalid checksum format: must be 8 hexadecimal characters");
         
-        if (Key.ApprovedCharRegex().IsMatch(checksum))
+        if (CharRegex.Approved().IsMatch(checksum))
             throw new ArgumentException("Invalid checksum");
         
         var apiKey = new ApiKey(prefix, key, entropy);
@@ -85,13 +88,6 @@ public class UuidKey
 
         return new Key(withoutHyphens ? String.Join("", parts) : String.Join("-", parts));
     }
-    
-    private string EncodePart(string part)
-    {
-        var encoded = _encoder.Encode(Convert.ToUInt64(part, 16), false);
-        var padding = 7 - encoded.Length;
-        return new StringBuilder(7).Insert(0, "0", padding) + encoded;
-    }
 
     public Key Parse(string key)
     {
@@ -100,6 +96,13 @@ public class UuidKey
             throw new ArgumentException("Invalid api key");
         
         return apiKey;
+    }
+    
+    private string EncodePart(string part)
+    {
+        var encoded = _encoder.Encode(Convert.ToUInt64(part, 16), false);
+        var padding = 7 - encoded.Length;
+        return new StringBuilder(7).Insert(0, "0", padding) + encoded;
     }
 
     private string GenerateEntropy(NumOfCrock32Chars size)

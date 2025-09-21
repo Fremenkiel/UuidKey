@@ -1,6 +1,6 @@
 using UuidKeySharp.Utils;
 
-namespace UuidKeySharp;
+namespace UuidKeySharp.Entities;
 
 public class ApiKey
 {

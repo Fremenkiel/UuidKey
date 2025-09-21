@@ -1,6 +1,6 @@
 using UuidKeySharp.Enums;
 
-namespace UuidKeySharp;
+namespace UuidKeySharp.Entities;
 
 public class KeyOptions {
     public bool Hyphens { get; set; } = false;

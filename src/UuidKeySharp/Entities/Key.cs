@@ -1,10 +1,11 @@
 using System.Text.RegularExpressions;
 using CrockfordBase32;
 using UuidKeySharp.Utils;
+using Regex = System.Text.RegularExpressions.Regex;
 
-namespace UuidKeySharp;
+namespace UuidKeySharp.Entities;
 
-public partial class Key(string apiKey, bool withoutHyphens = false)
+public class Key(string apiKey, bool withoutHyphens = false)
 {
     private const int KeyPartLength = 7;
     private const int KeyLengthWithHyphens = KeyPartLength * 4 + 3;
@@ -48,7 +49,7 @@ public partial class Key(string apiKey, bool withoutHyphens = false)
         for (var i = 0; i < KeyPartLength; i++)
         {
             var character = part[i..(i+1)];
-            if (ApprovedCharRegex().IsMatch(character) || DisapprovedCharRegex().IsMatch(character))
+            if (CharRegex.Approved().IsMatch(character) || CharRegex.Disapproved().IsMatch(character))
             {
                 return false;
             }
@@ -84,10 +85,4 @@ public partial class Key(string apiKey, bool withoutHyphens = false)
             apiKey[24..31],
         ];
     }
-
-    [GeneratedRegex("[^0-9A-Z]")]
-    public static partial Regex ApprovedCharRegex();
-
-    [GeneratedRegex("[ILOU]")]
-    private static partial Regex DisapprovedCharRegex();
 }
